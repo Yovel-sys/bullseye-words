@@ -53,3 +53,19 @@ scoring engine and level progression generalized to any word length.
 The word bank now covers real Hebrew dictionary words for lengths 2-10,
 and guesses are validated against it. Remaining work: polish the
 win/level-transition UI.
+
+## App store readiness
+
+- Privacy policy: [PRIVACY.md](./PRIVACY.md) (link to the GitHub-rendered
+  page — `https://github.com/Yovel-sys/bullseye-words/blob/main/PRIVACY.md`
+  — when filling out App Store Connect / Play Console privacy fields).
+- `app.json` has real `ios.bundleIdentifier` / `android.package`
+  (`com.yovelsys.bullseyewords`) and starting build numbers.
+- `eas.json` defines `development`, `preview`, and `production` build
+  profiles plus a `submit.production` target. Before the first build,
+  run `eas init` (requires an Expo account) to link the project and
+  populate `extra.eas.projectId` in `app.json`, and set the `owner`
+  field if building under an Expo organization account.
+- Still needed before submission: Apple Developer / Google Play Console
+  accounts, store listing assets (screenshots, descriptions, content
+  rating), and a device test pass (see the summary shared separately).

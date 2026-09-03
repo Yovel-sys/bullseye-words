@@ -14,7 +14,6 @@ import { tapHaptic } from '../utils/haptics';
 interface SettingsScreenProps {
   settings: Settings;
   onBack: () => void;
-  onToggleSound: (value: boolean) => void;
   onToggleHaptic: (value: boolean) => void;
 }
 
@@ -65,7 +64,6 @@ function Toggle({ value, onValueChange }: ToggleProps) {
 export default function SettingsScreen({
   settings,
   onBack,
-  onToggleSound,
   onToggleHaptic,
 }: SettingsScreenProps) {
   const [bugReportVisible, setBugReportVisible] = useState(false);
@@ -91,14 +89,6 @@ export default function SettingsScreen({
             <Text style={styles.closeButton}>✕</Text>
           </Pressable>
           <Text style={styles.title}>הגדרות</Text>
-        </View>
-
-        <Text style={styles.sectionTitle}>סאונד</Text>
-        <View style={styles.card}>
-          <View style={styles.row}>
-            <Text style={styles.rowLabel}>אפקטים קוליים</Text>
-            <Toggle value={settings.soundEnabled} onValueChange={onToggleSound} />
-          </View>
         </View>
 
         <Text style={styles.sectionTitle}>משוב</Text>
