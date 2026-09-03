@@ -31,6 +31,7 @@ export default function GameScreen({
 }: GameScreenProps) {
   const [target, setTarget] = useState('');
   const [clue, setClue] = useState('');
+  const [clueVisible, setClueVisible] = useState(false);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<GuessEntry[]>([]);
   const [won, setWon] = useState(false);
@@ -41,6 +42,7 @@ export default function GameScreen({
     const round = pickRoundTarget(wordLength);
     setTarget(round?.word ?? '');
     setClue(round?.clue ?? '');
+    setClueVisible(false);
     setHistory([]);
     setInput('');
     setWon(false);
@@ -85,7 +87,17 @@ export default function GameScreen({
             <Text style={styles.changeLink}>שינוי דרגת קושי</Text>
           </Pressable>
         </View>
-        {clue.length > 0 && <Text style={styles.clue}>רמז: {clue}</Text>}
+        {clue.length > 0 &&
+          (clueVisible ? (
+            <Text style={styles.clue}>רמז: {clue}</Text>
+          ) : (
+            <Pressable
+              style={styles.hintButton}
+              onPress={() => setClueVisible(true)}
+            >
+              <Text style={styles.hintButtonText}>הצג רמז</Text>
+            </Pressable>
+          ))}
 
         {won ? (
           <View style={styles.winBox}>
@@ -171,6 +183,20 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 8,
     paddingHorizontal: 24,
+  },
+  hintButton: {
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#2b6cb0',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    marginBottom: 8,
+  },
+  hintButtonText: {
+    color: '#2b6cb0',
+    fontWeight: '600',
+    fontSize: 14,
   },
   inputArea: {
     alignItems: 'center',
