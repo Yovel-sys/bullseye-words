@@ -7,10 +7,13 @@ import {
   View,
 } from 'react-native';
 import { DIFFICULTY_LEVELS } from '../data/riddles';
+import { tapHaptic } from '../utils/haptics';
+import GearIcon from '../components/GearIcon';
 
 interface DifficultyScreenProps {
   initialLength: number;
   onSelect: (wordLength: number) => void;
+  onOpenSettings: () => void;
 }
 
 const LABELS: Record<number, string> = {
@@ -24,11 +27,22 @@ const LABELS: Record<number, string> = {
 export default function DifficultyScreen({
   initialLength,
   onSelect,
+  onOpenSettings,
 }: DifficultyScreenProps) {
   const [selected, setSelected] = useState(initialLength);
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Pressable
+        style={styles.settingsButton}
+        onPress={() => {
+          tapHaptic();
+          onOpenSettings();
+        }}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+      >
+        <GearIcon size={20} color="#2b6cb0" />
+      </Pressable>
       <Text style={styles.title}>בול פגיעה</Text>
       <Text style={styles.subtitle}>בחר/י דרגת קושי</Text>
 
@@ -73,6 +87,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 40,
   },
+  settingsButton: {
+    position: 'absolute',
+    top: 44,
+    left: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#e3ecf7',
+    borderWidth: 1,
+    borderColor: '#c6d7ec',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
   title: {
     fontSize: 32,
     fontWeight: '800',
@@ -93,28 +121,32 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   card: {
-    width: 90,
-    height: 90,
+    width: 100,
+    minHeight: 96,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: '#bbb',
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 6,
   },
   cardSelected: {
     borderColor: '#2b6cb0',
     backgroundColor: '#2b6cb0',
   },
   cardLength: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '800',
     color: '#333',
+    textAlign: 'center',
   },
   cardLabel: {
     fontSize: 13,
     color: '#666',
     marginTop: 4,
+    textAlign: 'center',
   },
   cardTextSelected: {
     color: '#fff',
