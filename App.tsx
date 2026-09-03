@@ -69,7 +69,6 @@ export default function App() {
         <SettingsScreen
           settings={settings}
           onBack={() => setSettingsOpen(false)}
-          onToggleSound={(value) => updateSettings({ ...settings, soundEnabled: value })}
           onToggleHaptic={(value) => updateSettings({ ...settings, hapticEnabled: value })}
         />
       </Modal>
