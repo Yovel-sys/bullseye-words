@@ -3,7 +3,6 @@ import {
   Animated,
   Modal,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -72,48 +71,57 @@ export default function SettingsScreen({
   const [bugReportVisible, setBugReportVisible] = useState(false);
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => {
-            tapHaptic();
-            onBack();
-          }}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Text style={styles.backButton}>‹ חזרה</Text>
-        </Pressable>
-        <Text style={styles.title}>הגדרות</Text>
-      </View>
-
-      <Text style={styles.sectionTitle}>סאונד</Text>
-      <View style={styles.card}>
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>אפקטים קוליים</Text>
-          <Toggle value={settings.soundEnabled} onValueChange={onToggleSound} />
+    <View style={styles.overlay}>
+      <Pressable
+        style={StyleSheet.absoluteFill}
+        onPress={() => {
+          tapHaptic();
+          onBack();
+        }}
+      />
+      <View style={styles.dialog}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => {
+              tapHaptic();
+              onBack();
+            }}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <Text style={styles.closeButton}>✕</Text>
+          </Pressable>
+          <Text style={styles.title}>הגדרות</Text>
         </View>
-      </View>
 
-      <Text style={styles.sectionTitle}>משוב</Text>
-      <View style={styles.card}>
-        <View style={styles.row}>
-          <Text style={styles.rowLabel}>רטט (משוב הפטי)</Text>
-          <Toggle value={settings.hapticEnabled} onValueChange={onToggleHaptic} />
+        <Text style={styles.sectionTitle}>סאונד</Text>
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>אפקטים קוליים</Text>
+            <Toggle value={settings.soundEnabled} onValueChange={onToggleSound} />
+          </View>
         </View>
-      </View>
 
-      <Text style={styles.sectionTitle}>עזרה</Text>
-      <View style={styles.card}>
-        <Pressable
-          style={styles.row}
-          onPress={() => {
-            tapHaptic();
-            setBugReportVisible(true);
-          }}
-        >
-          <Text style={styles.rowLabel}>דיווח על באג</Text>
-          <Text style={styles.chevron}>‹</Text>
-        </Pressable>
+        <Text style={styles.sectionTitle}>משוב</Text>
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>רטט (משוב הפטי)</Text>
+            <Toggle value={settings.hapticEnabled} onValueChange={onToggleHaptic} />
+          </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>עזרה</Text>
+        <View style={styles.card}>
+          <Pressable
+            style={styles.row}
+            onPress={() => {
+              tapHaptic();
+              setBugReportVisible(true);
+            }}
+          >
+            <Text style={styles.rowLabel}>דיווח על באג</Text>
+            <Text style={styles.chevron}>‹</Text>
+          </Pressable>
+        </View>
       </View>
 
       <Modal
@@ -134,15 +142,25 @@ export default function SettingsScreen({
           </View>
         </Pressable>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
+  overlay: {
     flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
+  dialog: {
+    width: '100%',
+    maxWidth: 360,
     backgroundColor: '#f5f5f5',
-    paddingTop: 12,
+    borderRadius: 20,
+    paddingVertical: 16,
+    paddingBottom: 20,
   },
   header: {
     flexDirection: 'row-reverse',
@@ -152,20 +170,19 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '800',
-    textAlign: 'center',
   },
-  backButton: {
-    fontSize: 16,
-    color: '#2b6cb0',
+  closeButton: {
+    fontSize: 18,
+    color: '#666',
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '700',
     color: '#666',
     textAlign: 'right',
-    marginTop: 20,
+    marginTop: 16,
     marginBottom: 8,
     paddingHorizontal: 20,
   },

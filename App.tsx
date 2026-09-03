@@ -64,7 +64,8 @@ export default function App() {
 
       <Modal
         visible={settingsOpen}
-        animationType="slide"
+        transparent
+        animationType="fade"
         onRequestClose={() => setSettingsOpen(false)}
       >
         <SettingsScreen
