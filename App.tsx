@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Modal, SafeAreaView, StyleSheet, Text } from 'react-native';
+import { Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
 import DifficultyScreen from './src/screens/DifficultyScreen';
 import GameScreen from './src/screens/GameScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import { loadProgress, saveProgress } from './src/state/progress';
 import { loadSettings, saveSettings, type Settings } from './src/state/settings';
 import { setHapticEnabled } from './src/utils/haptics';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 type Screen = 'difficulty' | 'game';
 
@@ -17,12 +20,11 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
-    loadProgress().then((progress) => {
+    Promise.all([loadProgress(), loadSettings()]).then(([progress, loadedSettings]) => {
       setWordLength(progress.wordLength);
-    });
-    loadSettings().then((loaded) => {
-      setHapticEnabled(loaded.hapticEnabled);
-      setSettings(loaded);
+      setHapticEnabled(loadedSettings.hapticEnabled);
+      setSettings(loadedSettings);
+      SplashScreen.hideAsync();
     });
   }, []);
 
@@ -39,11 +41,7 @@ export default function App() {
   }
 
   if (wordLength === null || settings === null) {
-    return (
-      <SafeAreaView style={styles.safe}>
-        <Text style={styles.loading}>טוען...</Text>
-      </SafeAreaView>
-    );
+    return null;
   }
 
   return (
@@ -80,15 +78,3 @@ export default function App() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loading: {
-    fontSize: 20,
-  },
-});
