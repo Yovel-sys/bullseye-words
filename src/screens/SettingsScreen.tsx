@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   Modal,
   Pressable,
   SafeAreaView,
   StyleSheet,
-  Switch,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import type { Settings } from '../state/settings';
@@ -16,6 +17,50 @@ interface SettingsScreenProps {
   onBack: () => void;
   onToggleSound: (value: boolean) => void;
   onToggleHaptic: (value: boolean) => void;
+}
+
+interface ToggleProps {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+}
+
+const TOGGLE_TRAVEL = 20;
+
+// מתג מותאם אישית במקום ה-Switch המובנה: על אנדרואיד ה-Switch המובנה
+// מתעלם לפעמים מ-trackColor ומציג את צבע ה-accent הירוק של המערכת.
+function Toggle({ value, onValueChange }: ToggleProps) {
+  const anim = useRef(new Animated.Value(value ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(anim, {
+      toValue: value ? 1 : 0,
+      duration: 180,
+      useNativeDriver: false,
+    }).start();
+  }, [value, anim]);
+
+  const trackBackground = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['#ccc', '#2b6cb0'],
+  });
+  const translateX = anim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, TOGGLE_TRAVEL],
+  });
+
+  return (
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() => {
+        tapHaptic();
+        onValueChange(!value);
+      }}
+    >
+      <Animated.View style={[styles.toggleTrack, { backgroundColor: trackBackground }]}>
+        <Animated.View style={[styles.toggleThumb, { transform: [{ translateX }] }]} />
+      </Animated.View>
+    </TouchableOpacity>
+  );
 }
 
 export default function SettingsScreen({
@@ -45,15 +90,7 @@ export default function SettingsScreen({
       <View style={styles.card}>
         <View style={styles.row}>
           <Text style={styles.rowLabel}>אפקטים קוליים</Text>
-          <Switch
-            value={settings.soundEnabled}
-            onValueChange={(value) => {
-              tapHaptic();
-              onToggleSound(value);
-            }}
-            trackColor={{ false: '#ccc', true: '#2b6cb0' }}
-            thumbColor="#fff"
-          />
+          <Toggle value={settings.soundEnabled} onValueChange={onToggleSound} />
         </View>
       </View>
 
@@ -61,15 +98,7 @@ export default function SettingsScreen({
       <View style={styles.card}>
         <View style={styles.row}>
           <Text style={styles.rowLabel}>רטט (משוב הפטי)</Text>
-          <Switch
-            value={settings.hapticEnabled}
-            onValueChange={(value) => {
-              tapHaptic();
-              onToggleHaptic(value);
-            }}
-            trackColor={{ false: '#ccc', true: '#2b6cb0' }}
-            thumbColor="#fff"
-          />
+          <Toggle value={settings.hapticEnabled} onValueChange={onToggleHaptic} />
         </View>
       </View>
 
@@ -160,6 +189,19 @@ const styles = StyleSheet.create({
   chevron: {
     fontSize: 18,
     color: '#999',
+  },
+  toggleTrack: {
+    width: 50,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  toggleThumb: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#fff',
   },
   modalOverlay: {
     flex: 1,

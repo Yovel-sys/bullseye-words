@@ -14,6 +14,8 @@ import { scoreGuess, isWinningGuess, type GuessResult } from '../logic/game';
 import { isValidWord, pickRoundTarget } from '../data/words';
 import GuessRow from '../components/GuessRow';
 import LetterBoxInput from '../components/LetterBoxInput';
+import GearIcon from '../components/GearIcon';
+import { tapHaptic } from '../utils/haptics';
 
 interface GuessEntry {
   guess: string;
@@ -23,11 +25,13 @@ interface GuessEntry {
 interface GameScreenProps {
   wordLength: number;
   onChangeDifficulty: () => void;
+  onOpenSettings: () => void;
 }
 
 export default function GameScreen({
   wordLength,
   onChangeDifficulty,
+  onOpenSettings,
 }: GameScreenProps) {
   const [target, setTarget] = useState('');
   const [clue, setClue] = useState('');
@@ -77,6 +81,16 @@ export default function GameScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Pressable
+        style={styles.settingsButton}
+        onPress={() => {
+          tapHaptic();
+          onOpenSettings();
+        }}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+      >
+        <GearIcon size={20} color="#2b6cb0" />
+      </Pressable>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -159,6 +173,20 @@ const styles = StyleSheet.create({
   },
   flex: {
     flex: 1,
+  },
+  settingsButton: {
+    position: 'absolute',
+    top: 44,
+    left: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#e3ecf7',
+    borderWidth: 1,
+    borderColor: '#c6d7ec',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
   },
   title: {
     fontSize: 28,

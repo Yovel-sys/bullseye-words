@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { DIFFICULTY_LEVELS } from '../data/riddles';
 import { tapHaptic } from '../utils/haptics';
+import GearIcon from '../components/GearIcon';
 
 interface DifficultyScreenProps {
   initialLength: number;
@@ -40,7 +41,7 @@ export default function DifficultyScreen({
         }}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
       >
-        <Text style={styles.settingsIcon}>⚙️</Text>
+        <GearIcon size={20} color="#2b6cb0" />
       </Pressable>
       <Text style={styles.title}>בול פגיעה</Text>
       <Text style={styles.subtitle}>בחר/י דרגת קושי</Text>
@@ -93,13 +94,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#e3ecf7',
+    borderWidth: 1,
+    borderColor: '#c6d7ec',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
-  },
-  settingsIcon: {
-    fontSize: 20,
   },
   title: {
     fontSize: 32,

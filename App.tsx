@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text } from 'react-native';
+import { Modal, SafeAreaView, StyleSheet, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import DifficultyScreen from './src/screens/DifficultyScreen';
 import GameScreen from './src/screens/GameScreen';
@@ -8,12 +8,13 @@ import { loadProgress, saveProgress } from './src/state/progress';
 import { loadSettings, saveSettings, type Settings } from './src/state/settings';
 import { setHapticEnabled } from './src/utils/haptics';
 
-type Screen = 'difficulty' | 'game' | 'settings';
+type Screen = 'difficulty' | 'game';
 
 export default function App() {
   const [wordLength, setWordLength] = useState<number | null>(null);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [screen, setScreen] = useState<Screen>('difficulty');
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     loadProgress().then((progress) => {
@@ -47,25 +48,33 @@ export default function App() {
 
   return (
     <>
-      {screen === 'settings' ? (
-        <SettingsScreen
-          settings={settings}
-          onBack={() => setScreen('difficulty')}
-          onToggleSound={(value) => updateSettings({ ...settings, soundEnabled: value })}
-          onToggleHaptic={(value) => updateSettings({ ...settings, hapticEnabled: value })}
-        />
-      ) : screen === 'difficulty' ? (
+      {screen === 'difficulty' ? (
         <DifficultyScreen
           initialLength={wordLength}
           onSelect={handleSelectDifficulty}
-          onOpenSettings={() => setScreen('settings')}
+          onOpenSettings={() => setSettingsOpen(true)}
         />
       ) : (
         <GameScreen
           wordLength={wordLength}
           onChangeDifficulty={() => setScreen('difficulty')}
+          onOpenSettings={() => setSettingsOpen(true)}
         />
       )}
+
+      <Modal
+        visible={settingsOpen}
+        animationType="slide"
+        onRequestClose={() => setSettingsOpen(false)}
+      >
+        <SettingsScreen
+          settings={settings}
+          onBack={() => setSettingsOpen(false)}
+          onToggleSound={(value) => updateSettings({ ...settings, soundEnabled: value })}
+          onToggleHaptic={(value) => updateSettings({ ...settings, hapticEnabled: value })}
+        />
+      </Modal>
+
       <StatusBar style="auto" />
     </>
   );
