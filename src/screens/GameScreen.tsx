@@ -11,8 +11,7 @@ import {
   View,
 } from 'react-native';
 import { scoreGuess, isWinningGuess, type GuessResult } from '../logic/game';
-import { LEVELS, pickRandomWord, isValidWord } from '../data/words';
-import { loadProgress, saveProgress } from '../state/progress';
+import { isValidWord, pickRoundTarget } from '../data/words';
 import GuessRow from '../components/GuessRow';
 import LetterBoxInput from '../components/LetterBoxInput';
 
@@ -21,34 +20,37 @@ interface GuessEntry {
   result: GuessResult;
 }
 
-export default function GameScreen() {
-  const [levelIndex, setLevelIndex] = useState(0);
+interface GameScreenProps {
+  wordLength: number;
+  onChangeDifficulty: () => void;
+}
+
+export default function GameScreen({
+  wordLength,
+  onChangeDifficulty,
+}: GameScreenProps) {
   const [target, setTarget] = useState('');
+  const [clue, setClue] = useState('');
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<GuessEntry[]>([]);
   const [won, setWon] = useState(false);
-  const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const inputRef = useRef<TextInput>(null);
 
-  const wordLength = LEVELS[levelIndex];
-
-  useEffect(() => {
-    loadProgress().then((progress) => {
-      setLevelIndex(progress.levelIndex);
-      setReady(true);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
-    const word = pickRandomWord(wordLength);
-    setTarget(word ?? '');
+  function startNewRound() {
+    const round = pickRoundTarget(wordLength);
+    setTarget(round?.word ?? '');
+    setClue(round?.clue ?? '');
     setHistory([]);
     setInput('');
     setWon(false);
     setError('');
-  }, [levelIndex, ready, wordLength]);
+  }
+
+  useEffect(() => {
+    startNewRound();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wordLength]);
 
   const canSubmit = useMemo(
     () => input.length === wordLength && !won && target.length > 0,
@@ -70,23 +72,6 @@ export default function GameScreen() {
     }
   }
 
-  function handleNextLevel() {
-    const nextIndex = levelIndex + 1;
-    if (nextIndex >= LEVELS.length) return;
-    setLevelIndex(nextIndex);
-    saveProgress({ levelIndex: nextIndex });
-  }
-
-  if (!ready) {
-    return (
-      <SafeAreaView style={styles.safe}>
-        <Text style={styles.title}>טוען...</Text>
-      </SafeAreaView>
-    );
-  }
-
-  const isLastLevel = levelIndex >= LEVELS.length - 1;
-
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -94,20 +79,20 @@ export default function GameScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <Text style={styles.title}>בול פגיעה</Text>
-        <Text style={styles.subtitle}>
-          שלב {levelIndex + 1} · מילה בת {wordLength} אותיות
-        </Text>
+        <View style={styles.header}>
+          <Text style={styles.subtitle}>מילה בת {wordLength} אותיות</Text>
+          <Pressable onPress={onChangeDifficulty}>
+            <Text style={styles.changeLink}>שינוי דרגת קושי</Text>
+          </Pressable>
+        </View>
+        {clue.length > 0 && <Text style={styles.clue}>רמז: {clue}</Text>}
 
         {won ? (
           <View style={styles.winBox}>
             <Text style={styles.winText}>כל הכבוד! פגעת במילה: {target}</Text>
-            {isLastLevel ? (
-              <Text style={styles.winText}>סיימת את כל השלבים!</Text>
-            ) : (
-              <Pressable style={styles.button} onPress={handleNextLevel}>
-                <Text style={styles.buttonText}>לשלב הבא</Text>
-              </Pressable>
-            )}
+            <Pressable style={styles.button} onPress={startNewRound}>
+              <Text style={styles.buttonText}>מילה חדשה</Text>
+            </Pressable>
           </View>
         ) : (
           <View style={styles.inputArea}>
@@ -163,11 +148,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 12,
   },
+  header: {
+    flexDirection: 'row-reverse',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 4,
+  },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
     color: '#555',
-    marginBottom: 12,
+  },
+  changeLink: {
+    fontSize: 14,
+    color: '#2b6cb0',
+    textDecorationLine: 'underline',
+  },
+  clue: {
+    fontSize: 15,
+    textAlign: 'center',
+    color: '#666',
+    marginBottom: 8,
+    paddingHorizontal: 24,
   },
   inputArea: {
     alignItems: 'center',
