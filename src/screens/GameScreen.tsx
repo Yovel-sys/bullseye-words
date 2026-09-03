@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -14,6 +14,7 @@ import { scoreGuess, isWinningGuess, type GuessResult } from '../logic/game';
 import { LEVELS, pickRandomWord, isValidWord } from '../data/words';
 import { loadProgress, saveProgress } from '../state/progress';
 import GuessRow from '../components/GuessRow';
+import LetterBoxInput from '../components/LetterBoxInput';
 
 interface GuessEntry {
   guess: string;
@@ -28,6 +29,7 @@ export default function GameScreen() {
   const [won, setWon] = useState(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
+  const inputRef = useRef<TextInput>(null);
 
   const wordLength = LEVELS[levelIndex];
 
@@ -108,27 +110,23 @@ export default function GameScreen() {
             )}
           </View>
         ) : (
-          <View style={styles.inputRow}>
-            <TextInput
-              style={styles.input}
+          <View style={styles.inputArea}>
+            <LetterBoxInput
+              ref={inputRef}
               value={input}
+              wordLength={wordLength}
               onChangeText={(text) => {
-                setInput(text.slice(0, wordLength));
+                setInput(text);
                 setError('');
               }}
-              maxLength={wordLength}
-              textAlign="right"
-              autoCapitalize="none"
-              autoCorrect={false}
-              placeholder={`נחש/י מילה בת ${wordLength} אותיות`}
-              onSubmitEditing={handleSubmit}
+              onSubmit={handleSubmit}
             />
             <Pressable
               style={[styles.button, !canSubmit && styles.buttonDisabled]}
               onPress={handleSubmit}
               disabled={!canSubmit}
             >
-              <Text style={styles.buttonText}>נחש</Text>
+              <Text style={styles.buttonText}>הגש</Text>
             </Pressable>
           </View>
         )}
@@ -171,26 +169,16 @@ const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 12,
   },
-  inputRow: {
-    flexDirection: 'row-reverse',
+  inputArea: {
+    alignItems: 'center',
     paddingHorizontal: 16,
     marginBottom: 8,
-  },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#aaa',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    fontSize: 18,
-    backgroundColor: '#fff',
-    marginStart: 8,
   },
   button: {
     backgroundColor: '#2b6cb0',
     borderRadius: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 10,
     justifyContent: 'center',
   },
   buttonDisabled: {
