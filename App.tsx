@@ -3,25 +3,41 @@ import { SafeAreaView, StyleSheet, Text } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import DifficultyScreen from './src/screens/DifficultyScreen';
 import GameScreen from './src/screens/GameScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 import { loadProgress, saveProgress } from './src/state/progress';
+import { loadSettings, saveSettings, type Settings } from './src/state/settings';
+import { setHapticEnabled } from './src/utils/haptics';
+
+type Screen = 'difficulty' | 'game' | 'settings';
 
 export default function App() {
   const [wordLength, setWordLength] = useState<number | null>(null);
-  const [showDifficulty, setShowDifficulty] = useState(true);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [screen, setScreen] = useState<Screen>('difficulty');
 
   useEffect(() => {
     loadProgress().then((progress) => {
       setWordLength(progress.wordLength);
     });
+    loadSettings().then((loaded) => {
+      setHapticEnabled(loaded.hapticEnabled);
+      setSettings(loaded);
+    });
   }, []);
 
   function handleSelectDifficulty(length: number) {
     setWordLength(length);
-    setShowDifficulty(false);
+    setScreen('game');
     saveProgress({ wordLength: length });
   }
 
-  if (wordLength === null) {
+  function updateSettings(next: Settings) {
+    setSettings(next);
+    setHapticEnabled(next.hapticEnabled);
+    saveSettings(next);
+  }
+
+  if (wordLength === null || settings === null) {
     return (
       <SafeAreaView style={styles.safe}>
         <Text style={styles.loading}>טוען...</Text>
@@ -31,15 +47,23 @@ export default function App() {
 
   return (
     <>
-      {showDifficulty ? (
+      {screen === 'settings' ? (
+        <SettingsScreen
+          settings={settings}
+          onBack={() => setScreen('difficulty')}
+          onToggleSound={(value) => updateSettings({ ...settings, soundEnabled: value })}
+          onToggleHaptic={(value) => updateSettings({ ...settings, hapticEnabled: value })}
+        />
+      ) : screen === 'difficulty' ? (
         <DifficultyScreen
           initialLength={wordLength}
           onSelect={handleSelectDifficulty}
+          onOpenSettings={() => setScreen('settings')}
         />
       ) : (
         <GameScreen
           wordLength={wordLength}
-          onChangeDifficulty={() => setShowDifficulty(true)}
+          onChangeDifficulty={() => setScreen('difficulty')}
         />
       )}
       <StatusBar style="auto" />

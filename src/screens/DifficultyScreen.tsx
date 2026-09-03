@@ -7,10 +7,12 @@ import {
   View,
 } from 'react-native';
 import { DIFFICULTY_LEVELS } from '../data/riddles';
+import { tapHaptic } from '../utils/haptics';
 
 interface DifficultyScreenProps {
   initialLength: number;
   onSelect: (wordLength: number) => void;
+  onOpenSettings: () => void;
 }
 
 const LABELS: Record<number, string> = {
@@ -24,11 +26,22 @@ const LABELS: Record<number, string> = {
 export default function DifficultyScreen({
   initialLength,
   onSelect,
+  onOpenSettings,
 }: DifficultyScreenProps) {
   const [selected, setSelected] = useState(initialLength);
 
   return (
     <SafeAreaView style={styles.safe}>
+      <Pressable
+        style={styles.settingsButton}
+        onPress={() => {
+          tapHaptic();
+          onOpenSettings();
+        }}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+      >
+        <Text style={styles.settingsIcon}>⚙️</Text>
+      </Pressable>
       <Text style={styles.title}>בול פגיעה</Text>
       <Text style={styles.subtitle}>בחר/י דרגת קושי</Text>
 
@@ -72,6 +85,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     alignItems: 'center',
     paddingTop: 40,
+  },
+  settingsButton: {
+    position: 'absolute',
+    top: 44,
+    left: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  settingsIcon: {
+    fontSize: 20,
   },
   title: {
     fontSize: 32,
