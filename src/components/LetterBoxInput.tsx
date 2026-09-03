@@ -35,12 +35,12 @@ const LetterBoxInput = forwardRef<TextInput, LetterBoxInputProps>(
           ref={ref}
           style={styles.hiddenInput}
           value={value}
-          onChangeText={(text) => onChangeText(text.slice(0, wordLength))}
-          maxLength={wordLength}
+          onChangeText={onChangeText}
           autoCapitalize="none"
           autoCorrect={false}
           onSubmitEditing={onSubmit}
           autoFocus
+          blurOnSubmit={false}
           caretHidden
         />
       </Pressable>
