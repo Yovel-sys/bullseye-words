@@ -39,3 +39,19 @@ describe('isWinningGuess', () => {
     expect(isWinningGuess('בא', 'אב')).toBe(false);
   });
 });
+
+describe('sofit (final letter) leniency', () => {
+  it('scoreGuess treats a final letter as a bull against its regular form', () => {
+    // target 'כן' starts with regular כ; guessing final-form ך in that
+    // position should still count as a bull, not a mismatch.
+    expect(scoreGuess('ךן', 'כן')).toEqual({ bulls: 2, hits: 0 });
+  });
+
+  it('scoreGuess treats a final letter as a hit against its regular form', () => {
+    expect(scoreGuess('נך', 'כן')).toEqual({ bulls: 0, hits: 2 });
+  });
+
+  it('isWinningGuess ignores sofit vs. regular form differences', () => {
+    expect(isWinningGuess('ךן', 'כן')).toBe(true);
+  });
+});

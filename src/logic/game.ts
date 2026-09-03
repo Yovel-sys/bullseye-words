@@ -1,3 +1,5 @@
+import { normalizeSofit } from './hebrew';
+
 export interface GuessResult {
   bulls: number;
   hits: number;
@@ -9,6 +11,9 @@ export interface GuessResult {
  * - hits: letters that appear in the target but in the wrong position,
  *   counted using remaining letter frequencies so duplicates are never
  *   double-counted beyond how many times they actually occur.
+ *
+ * Final-form letters (ך ם ן ף ץ) are treated as equivalent to their
+ * regular form (כ מ נ פ צ), so typing the "wrong" form still counts.
  */
 export function scoreGuess(guess: string, target: string): GuessResult {
   if (guess.length !== target.length) {
@@ -16,8 +21,8 @@ export function scoreGuess(guess: string, target: string): GuessResult {
   }
 
   const length = target.length;
-  const guessLetters = guess.split('');
-  const targetLetters = target.split('');
+  const guessLetters = normalizeSofit(guess).split('');
+  const targetLetters = normalizeSofit(target).split('');
 
   let bulls = 0;
   const remainingGuess: string[] = [];
@@ -50,5 +55,5 @@ export function scoreGuess(guess: string, target: string): GuessResult {
 }
 
 export function isWinningGuess(guess: string, target: string): boolean {
-  return guess === target;
+  return normalizeSofit(guess) === normalizeSofit(target);
 }

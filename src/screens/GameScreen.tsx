@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { scoreGuess, isWinningGuess, type GuessResult } from '../logic/game';
-import { LEVELS, pickRandomWord } from '../data/words';
+import { LEVELS, pickRandomWord, isValidWord } from '../data/words';
 import { loadProgress, saveProgress } from '../state/progress';
 import GuessRow from '../components/GuessRow';
 
@@ -27,6 +27,7 @@ export default function GameScreen() {
   const [history, setHistory] = useState<GuessEntry[]>([]);
   const [won, setWon] = useState(false);
   const [ready, setReady] = useState(false);
+  const [error, setError] = useState('');
 
   const wordLength = LEVELS[levelIndex];
 
@@ -44,6 +45,7 @@ export default function GameScreen() {
     setHistory([]);
     setInput('');
     setWon(false);
+    setError('');
   }, [levelIndex, ready, wordLength]);
 
   const canSubmit = useMemo(
@@ -53,6 +55,11 @@ export default function GameScreen() {
 
   function handleSubmit() {
     if (!canSubmit) return;
+    if (!isValidWord(input)) {
+      setError('זו לא מילה תקנית בעברית');
+      return;
+    }
+    setError('');
     const result = scoreGuess(input, target);
     setHistory((prev) => [{ guess: input, result }, ...prev]);
     setInput('');
@@ -105,7 +112,10 @@ export default function GameScreen() {
             <TextInput
               style={styles.input}
               value={input}
-              onChangeText={(text) => setInput(text.slice(0, wordLength))}
+              onChangeText={(text) => {
+                setInput(text.slice(0, wordLength));
+                setError('');
+              }}
               maxLength={wordLength}
               textAlign="right"
               autoCapitalize="none"
@@ -122,6 +132,8 @@ export default function GameScreen() {
             </Pressable>
           </View>
         )}
+
+        {error.length > 0 && <Text style={styles.error}>{error}</Text>}
 
         <FlatList
           style={styles.flex}
@@ -205,5 +217,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#888',
     marginTop: 24,
+  },
+  error: {
+    textAlign: 'center',
+    color: '#c0392b',
+    marginBottom: 8,
   },
 });
