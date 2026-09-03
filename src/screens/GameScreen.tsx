@@ -59,6 +59,7 @@ export default function GameScreen() {
     if (!canSubmit) return;
     if (!isValidWord(input)) {
       setError('זו לא מילה תקנית בעברית');
+      inputRef.current?.focus();
       return;
     }
     setError('');

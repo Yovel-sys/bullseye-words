@@ -40,6 +40,7 @@ const LetterBoxInput = forwardRef<TextInput, LetterBoxInputProps>(
           autoCorrect={false}
           onSubmitEditing={onSubmit}
           autoFocus
+          blurOnSubmit={false}
           caretHidden
         />
       </Pressable>
