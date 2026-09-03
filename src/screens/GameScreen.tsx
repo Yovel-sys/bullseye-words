@@ -75,6 +75,15 @@ export default function GameScreen({
     }
   }
 
+  const sortedHistory = useMemo(
+    () =>
+      [...history].sort(
+        (a, b) =>
+          b.result.bulls - a.result.bulls || b.result.hits - a.result.hits
+      ),
+    [history]
+  );
+
   return (
     <SafeAreaView style={styles.safe}>
       <KeyboardAvoidingView
@@ -138,7 +147,7 @@ export default function GameScreen({
 
         <FlatList
           style={styles.flex}
-          data={history}
+          data={sortedHistory}
           keyExtractor={(_, index) => String(index)}
           renderItem={({ item }) => (
             <GuessRow guess={item.guess} result={item.result} />
