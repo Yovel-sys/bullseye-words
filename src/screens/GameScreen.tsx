@@ -116,7 +116,12 @@ export default function GameScreen() {
               value={input}
               wordLength={wordLength}
               onChangeText={(text) => {
-                setInput(text);
+                if (error && text.length > input.length) {
+                  const typed = text.slice(input.length);
+                  setInput(typed.slice(0, wordLength));
+                } else {
+                  setInput(text.slice(0, wordLength));
+                }
                 setError('');
               }}
               onSubmit={handleSubmit}
