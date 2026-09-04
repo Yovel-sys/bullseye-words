@@ -1,5 +1,7 @@
 import { forwardRef } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { tapHaptic } from '../utils/haptics';
+import { playLetterClickSound } from '../utils/sound';
 
 interface LetterBoxInputProps {
   value: string;
@@ -12,10 +14,19 @@ const LetterBoxInput = forwardRef<TextInput, LetterBoxInputProps>(
   ({ value, wordLength, onChangeText, onSubmit }, ref) => {
     const cells = Array.from({ length: wordLength }, (_, index) => value[index] ?? '');
 
+    // נקישה נשמעת רק כשמוסיפים אות, לא במחיקה, כדי שהמחיקה תישאר שקטה.
+    function handleChangeText(text: string) {
+      if (text.length > value.length) {
+        playLetterClickSound();
+      }
+      onChangeText(text);
+    }
+
     return (
       <Pressable
         style={styles.wrapper}
         onPress={() => {
+          tapHaptic();
           if (typeof ref !== 'function' && ref?.current) {
             ref.current.focus();
           }
@@ -35,7 +46,7 @@ const LetterBoxInput = forwardRef<TextInput, LetterBoxInputProps>(
           ref={ref}
           style={styles.hiddenInput}
           value={value}
-          onChangeText={onChangeText}
+          onChangeText={handleChangeText}
           autoCapitalize="none"
           autoCorrect={false}
           onSubmitEditing={onSubmit}

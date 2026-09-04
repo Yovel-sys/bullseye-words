@@ -10,10 +10,12 @@ import {
 } from 'react-native';
 import type { Settings } from '../state/settings';
 import { tapHaptic } from '../utils/haptics';
+import { playClickSound } from '../utils/sound';
 
 interface SettingsScreenProps {
   settings: Settings;
   onBack: () => void;
+  onToggleSound: (value: boolean) => void;
   onToggleHaptic: (value: boolean) => void;
 }
 
@@ -51,7 +53,10 @@ function Toggle({ value, onValueChange }: ToggleProps) {
       activeOpacity={0.8}
       onPress={() => {
         tapHaptic();
+        // הסדר חשוב: קודם מעדכנים את הערך (שיכול לכבות/להדליק את הצליל עצמו),
+        // ורק אז מנגנים - כך שכיבוי המתג לא ישמיע צליל, והדלקתו כן.
         onValueChange(!value);
+        playClickSound();
       }}
     >
       <Animated.View style={[styles.toggleTrack, { backgroundColor: trackBackground }]}>
@@ -64,6 +69,7 @@ function Toggle({ value, onValueChange }: ToggleProps) {
 export default function SettingsScreen({
   settings,
   onBack,
+  onToggleSound,
   onToggleHaptic,
 }: SettingsScreenProps) {
   const [bugReportVisible, setBugReportVisible] = useState(false);
@@ -74,6 +80,7 @@ export default function SettingsScreen({
         style={StyleSheet.absoluteFill}
         onPress={() => {
           tapHaptic();
+          playClickSound();
           onBack();
         }}
       />
@@ -82,6 +89,7 @@ export default function SettingsScreen({
           <Pressable
             onPress={() => {
               tapHaptic();
+              playClickSound();
               onBack();
             }}
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -89,6 +97,14 @@ export default function SettingsScreen({
             <Text style={styles.closeButton}>✕</Text>
           </Pressable>
           <Text style={styles.title}>הגדרות</Text>
+        </View>
+
+        <Text style={styles.sectionTitle}>סאונד</Text>
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>אפקטים קוליים</Text>
+            <Toggle value={settings.soundEnabled} onValueChange={onToggleSound} />
+          </View>
         </View>
 
         <Text style={styles.sectionTitle}>משוב</Text>
@@ -105,6 +121,7 @@ export default function SettingsScreen({
             style={styles.row}
             onPress={() => {
               tapHaptic();
+              playClickSound();
               setBugReportVisible(true);
             }}
           >
@@ -124,6 +141,7 @@ export default function SettingsScreen({
           style={styles.modalOverlay}
           onPress={() => {
             tapHaptic();
+            playClickSound();
             setBugReportVisible(false);
           }}
         >

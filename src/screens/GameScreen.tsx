@@ -15,7 +15,13 @@ import { isValidWord, pickRoundTarget } from '../data/words';
 import GuessRow from '../components/GuessRow';
 import LetterBoxInput from '../components/LetterBoxInput';
 import GearIcon from '../components/GearIcon';
-import { tapHaptic } from '../utils/haptics';
+import { errorHaptic, successHaptic, tapHaptic } from '../utils/haptics';
+import {
+  playClickSound,
+  playCorrectSound,
+  playGuessSound,
+  playIncorrectSound,
+} from '../utils/sound';
 
 interface GuessEntry {
   guess: string;
@@ -66,6 +72,8 @@ export default function GameScreen({
   function handleSubmit() {
     if (!canSubmit) return;
     if (!isValidWord(input)) {
+      errorHaptic();
+      playIncorrectSound();
       setError('זו לא מילה תקנית בעברית');
       inputRef.current?.focus();
       return;
@@ -75,7 +83,12 @@ export default function GameScreen({
     setHistory((prev) => [{ guess: input, result }, ...prev]);
     setInput('');
     if (isWinningGuess(input, target)) {
+      successHaptic();
+      playCorrectSound();
       setWon(true);
+    } else {
+      tapHaptic();
+      playGuessSound();
     }
   }
 
@@ -94,6 +107,7 @@ export default function GameScreen({
         style={styles.settingsButton}
         onPress={() => {
           tapHaptic();
+          playClickSound();
           onOpenSettings();
         }}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -107,7 +121,13 @@ export default function GameScreen({
         <Text style={styles.title}>בול פגיעה</Text>
         <View style={styles.header}>
           <Text style={styles.subtitle}>מילה בת {wordLength} אותיות</Text>
-          <Pressable onPress={onChangeDifficulty}>
+          <Pressable
+            onPress={() => {
+              tapHaptic();
+              playClickSound();
+              onChangeDifficulty();
+            }}
+          >
             <Text style={styles.changeLink}>שינוי דרגת קושי</Text>
           </Pressable>
         </View>
@@ -117,7 +137,11 @@ export default function GameScreen({
           ) : (
             <Pressable
               style={styles.hintButton}
-              onPress={() => setClueVisible(true)}
+              onPress={() => {
+                tapHaptic();
+                playClickSound();
+                setClueVisible(true);
+              }}
             >
               <Text style={styles.hintButtonText}>הצג רמז</Text>
             </Pressable>
@@ -126,7 +150,14 @@ export default function GameScreen({
         {won ? (
           <View style={styles.winBox}>
             <Text style={styles.winText}>כל הכבוד! פגעת במילה: {target}</Text>
-            <Pressable style={styles.button} onPress={startNewRound}>
+            <Pressable
+              style={styles.button}
+              onPress={() => {
+                tapHaptic();
+                playClickSound();
+                startNewRound();
+              }}
+            >
               <Text style={styles.buttonText}>מילה חדשה</Text>
             </Pressable>
           </View>
