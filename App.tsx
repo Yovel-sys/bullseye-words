@@ -8,6 +8,7 @@ import AnimatedModal from './src/components/AnimatedModal';
 import { loadProgress, saveProgress } from './src/state/progress';
 import { loadSettings, saveSettings, type Settings } from './src/state/settings';
 import { setHapticEnabled } from './src/utils/haptics';
+import { setSoundEnabled } from './src/utils/sound';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -23,6 +24,7 @@ export default function App() {
     Promise.all([loadProgress(), loadSettings()]).then(([progress, loadedSettings]) => {
       setWordLength(progress.wordLength);
       setHapticEnabled(loadedSettings.hapticEnabled);
+      setSoundEnabled(loadedSettings.soundEnabled);
       setSettings(loadedSettings);
       SplashScreen.hideAsync();
     });
@@ -37,6 +39,7 @@ export default function App() {
   function updateSettings(next: Settings) {
     setSettings(next);
     setHapticEnabled(next.hapticEnabled);
+    setSoundEnabled(next.soundEnabled);
     saveSettings(next);
   }
 
@@ -64,6 +67,7 @@ export default function App() {
         <SettingsScreen
           settings={settings}
           onBack={() => setSettingsOpen(false)}
+          onToggleSound={(value) => updateSettings({ ...settings, soundEnabled: value })}
           onToggleHaptic={(value) => updateSettings({ ...settings, hapticEnabled: value })}
         />
       </AnimatedModal>

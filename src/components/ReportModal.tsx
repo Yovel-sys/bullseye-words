@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import AnimatedModal from './AnimatedModal';
 import { successHaptic, tapHaptic } from '../utils/haptics';
+import { playClickSound, playCorrectSound } from '../utils/sound';
 
 export interface ReportField {
   key: string;
@@ -64,12 +65,14 @@ export default function ReportModal({
   function handleSubmit() {
     if (!canSubmit) return;
     successHaptic();
+    playCorrectSound();
     onSubmit?.(values);
     setSubmitted(true);
   }
 
   function handleClose() {
     tapHaptic();
+    playClickSound();
     onClose();
   }
 

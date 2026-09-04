@@ -17,6 +17,13 @@ import LetterBoxInput from '../components/LetterBoxInput';
 import GearIcon from '../components/GearIcon';
 import ReportModal from '../components/ReportModal';
 import { errorHaptic, selectionHaptic, successHaptic, tapHaptic } from '../utils/haptics';
+import {
+  playClickSound,
+  playCorrectSound,
+  playGuessSound,
+  playIncorrectSound,
+  playLetterClickSound,
+} from '../utils/sound';
 
 interface GuessEntry {
   guess: string;
@@ -77,6 +84,7 @@ export default function GameScreen({
     if (!canSubmit) return;
     if (!isValidWord(input)) {
       errorHaptic();
+      playIncorrectSound();
       setError('זו לא מילה תקנית בעברית');
       inputRef.current?.focus();
       return;
@@ -87,9 +95,11 @@ export default function GameScreen({
     setInput('');
     if (isWinningGuess(input, target)) {
       successHaptic();
+      playCorrectSound();
       setWon(true);
     } else {
       tapHaptic();
+      playGuessSound();
     }
   }
 
@@ -108,6 +118,7 @@ export default function GameScreen({
         style={styles.settingsButton}
         onPress={() => {
           tapHaptic();
+          playClickSound();
           onOpenSettings();
         }}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -132,6 +143,7 @@ export default function GameScreen({
           <Pressable
             onPress={() => {
               tapHaptic();
+              playClickSound();
               onChangeDifficulty();
             }}
           >
@@ -146,6 +158,7 @@ export default function GameScreen({
               style={styles.hintButton}
               onPress={() => {
                 tapHaptic();
+                playClickSound();
                 setClueVisible(true);
               }}
             >
@@ -160,6 +173,7 @@ export default function GameScreen({
               style={styles.button}
               onPress={() => {
                 tapHaptic();
+                playClickSound();
                 startNewRound();
               }}
             >
@@ -175,6 +189,7 @@ export default function GameScreen({
               onChangeText={(text) => {
                 if (text.length > input.length) {
                   selectionHaptic();
+                  playLetterClickSound();
                 }
                 if (error && text.length > input.length) {
                   const typed = text.slice(input.length);

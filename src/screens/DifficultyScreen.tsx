@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { DIFFICULTY_LEVELS } from '../data/riddles';
 import { selectionHaptic, tapHaptic } from '../utils/haptics';
+import { playClickSound } from '../utils/sound';
 import GearIcon from '../components/GearIcon';
 
 interface DifficultyScreenProps {
@@ -37,6 +38,7 @@ export default function DifficultyScreen({
         style={styles.settingsButton}
         onPress={() => {
           tapHaptic();
+          playClickSound();
           onOpenSettings();
         }}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -53,6 +55,7 @@ export default function DifficultyScreen({
             style={[styles.card, selected === length && styles.cardSelected]}
             onPress={() => {
               selectionHaptic();
+              playClickSound();
               setSelected(length);
             }}
           >
@@ -80,6 +83,7 @@ export default function DifficultyScreen({
         style={styles.button}
         onPress={() => {
           tapHaptic();
+          playClickSound();
           onSelect(selected);
         }}
       >

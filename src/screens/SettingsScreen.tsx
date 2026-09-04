@@ -10,10 +10,12 @@ import {
 import type { Settings } from '../state/settings';
 import ReportModal from '../components/ReportModal';
 import { tapHaptic, toggleHaptic } from '../utils/haptics';
+import { playClickSound } from '../utils/sound';
 
 interface SettingsScreenProps {
   settings: Settings;
   onBack: () => void;
+  onToggleSound: (value: boolean) => void;
   onToggleHaptic: (value: boolean) => void;
 }
 
@@ -61,9 +63,19 @@ function Toggle({ value, onValueChange }: ToggleProps) {
 export default function SettingsScreen({
   settings,
   onBack,
+  onToggleSound,
   onToggleHaptic,
 }: SettingsScreenProps) {
   const [bugReportVisible, setBugReportVisible] = useState(false);
+
+  // אותו רעיון כמו במתג הרטט: בכיבוי משמיעים לפני העדכון (בזמן שהצליל עוד
+  // פעיל), ובהפעלה אחריו — כדי שהמשתמש ישמע מיד מה בחר.
+  function handleToggleSound(value: boolean) {
+    tapHaptic();
+    if (!value) playClickSound();
+    onToggleSound(value);
+    if (value) playClickSound();
+  }
 
   // המשוב עצמו הוא התצוגה המקדימה של המתג: בכיבוי מרטטים לפני העדכון (בזמן
   // שהרטט עוד פעיל), ובהפעלה אחריו — כדי שהמשתמש ירגיש מיד מה בחר.
@@ -79,6 +91,7 @@ export default function SettingsScreen({
         style={StyleSheet.absoluteFill}
         onPress={() => {
           tapHaptic();
+          playClickSound();
           onBack();
         }}
       />
@@ -87,6 +100,7 @@ export default function SettingsScreen({
           <Pressable
             onPress={() => {
               tapHaptic();
+              playClickSound();
               onBack();
             }}
             hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
@@ -96,11 +110,25 @@ export default function SettingsScreen({
           <Text style={styles.title}>הגדרות</Text>
         </View>
 
+        <Text style={styles.sectionTitle}>סאונד</Text>
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <Text style={styles.rowLabel}>אפקטים קוליים</Text>
+            <Toggle value={settings.soundEnabled} onValueChange={handleToggleSound} />
+          </View>
+        </View>
+
         <Text style={styles.sectionTitle}>משוב</Text>
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.rowLabel}>רטט (משוב הפטי)</Text>
-            <Toggle value={settings.hapticEnabled} onValueChange={handleToggleHaptic} />
+            <Toggle
+              value={settings.hapticEnabled}
+              onValueChange={(value) => {
+                playClickSound();
+                handleToggleHaptic(value);
+              }}
+            />
           </View>
         </View>
 
@@ -110,6 +138,7 @@ export default function SettingsScreen({
             style={styles.row}
             onPress={() => {
               tapHaptic();
+              playClickSound();
               setBugReportVisible(true);
             }}
           >
