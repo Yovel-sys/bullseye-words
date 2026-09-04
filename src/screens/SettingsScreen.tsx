@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import type { Settings } from '../state/settings';
 import ReportModal from '../components/ReportModal';
-import { tapHaptic } from '../utils/haptics';
+import { tapHaptic, toggleHaptic } from '../utils/haptics';
 
 interface SettingsScreenProps {
   settings: Settings;
@@ -49,10 +49,7 @@ function Toggle({ value, onValueChange }: ToggleProps) {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() => {
-        tapHaptic();
-        onValueChange(!value);
-      }}
+      onPress={() => onValueChange(!value)}
     >
       <Animated.View style={[styles.toggleTrack, { backgroundColor: trackBackground }]}>
         <Animated.View style={[styles.toggleThumb, { transform: [{ translateX }] }]} />
@@ -67,6 +64,14 @@ export default function SettingsScreen({
   onToggleHaptic,
 }: SettingsScreenProps) {
   const [bugReportVisible, setBugReportVisible] = useState(false);
+
+  // המשוב עצמו הוא התצוגה המקדימה של המתג: בכיבוי מרטטים לפני העדכון (בזמן
+  // שהרטט עוד פעיל), ובהפעלה אחריו — כדי שהמשתמש ירגיש מיד מה בחר.
+  function handleToggleHaptic(value: boolean) {
+    if (!value) toggleHaptic(false);
+    onToggleHaptic(value);
+    if (value) toggleHaptic(true);
+  }
 
   return (
     <View style={styles.overlay}>
@@ -95,7 +100,7 @@ export default function SettingsScreen({
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.rowLabel}>רטט (משוב הפטי)</Text>
-            <Toggle value={settings.hapticEnabled} onValueChange={onToggleHaptic} />
+            <Toggle value={settings.hapticEnabled} onValueChange={handleToggleHaptic} />
           </View>
         </View>
 
