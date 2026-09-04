@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   reportButton: {
     position: 'absolute',
     top: 44,
-    right: 20,
+    left: 68,
     width: 40,
     height: 40,
     borderRadius: 20,

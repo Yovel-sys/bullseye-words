@@ -109,7 +109,6 @@ export default function ReportModal({
                       }
                       placeholder={field.placeholder}
                       placeholderTextColor="#a8b4c4"
-                      textAlign="right"
                       multiline={field.multiline}
                     />
                   </View>
@@ -163,6 +162,7 @@ const styles = StyleSheet.create({
     color: '#1a202c',
     textAlign: 'center',
     marginBottom: 8,
+    writingDirection: 'rtl',
   },
   message: {
     fontSize: 14,
@@ -170,12 +170,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 4,
+    writingDirection: 'rtl',
   },
   fieldLabel: {
     fontSize: 13,
     fontWeight: '700',
     color: '#666',
     textAlign: 'right',
+    writingDirection: 'rtl',
     marginTop: 14,
     marginBottom: 6,
   },
@@ -188,6 +190,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 15,
     color: '#1a202c',
+    textAlign: 'right',
+    writingDirection: 'rtl',
   },
   inputMultiline: {
     minHeight: 90,
@@ -219,6 +223,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#fff',
+    writingDirection: 'rtl',
   },
   cancelButton: {
     backgroundColor: '#e3ecf7',
@@ -229,5 +234,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     color: '#2b6cb0',
+    writingDirection: 'rtl',
   },
 });
