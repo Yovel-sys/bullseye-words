@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -9,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import type { Settings } from '../state/settings';
+import ReportModal from '../components/ReportModal';
 import { tapHaptic } from '../utils/haptics';
 
 interface SettingsScreenProps {
@@ -114,24 +114,26 @@ export default function SettingsScreen({
         </View>
       </View>
 
-      <Modal
+      <ReportModal
         visible={bugReportVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setBugReportVisible(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => {
-            tapHaptic();
-            setBugReportVisible(false);
-          }}
-        >
-          <View style={styles.modalCard}>
-            <Text style={styles.modalText}>בקרוב</Text>
-          </View>
-        </Pressable>
-      </Modal>
+        title="דיווח על באג"
+        intro="נתקלתם במשהו שלא עובד כמו שצריך? ספרו לנו ונתקן."
+        fields={[
+          {
+            key: 'title',
+            label: 'כותרת',
+            placeholder: 'תיאור קצר של הבעיה',
+            required: true,
+          },
+          {
+            key: 'description',
+            label: 'מה קרה?',
+            placeholder: 'ספרו לנו מה קרה, ואיך אפשר לשחזר את הבעיה',
+            multiline: true,
+          },
+        ]}
+        onClose={() => setBugReportVisible(false)}
+      />
     </View>
   );
 }
@@ -209,23 +211,5 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     backgroundColor: '#fff',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  modalCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingVertical: 24,
-    paddingHorizontal: 40,
-  },
-  modalText: {
-    fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
   },
 });
