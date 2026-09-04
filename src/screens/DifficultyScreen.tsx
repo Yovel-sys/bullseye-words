@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { DIFFICULTY_LEVELS } from '../data/riddles';
-import { tapHaptic } from '../utils/haptics';
+import { selectionHaptic, tapHaptic } from '../utils/haptics';
 import { playClickSound } from '../utils/sound';
 import GearIcon from '../components/GearIcon';
 
@@ -54,7 +54,7 @@ export default function DifficultyScreen({
             key={length}
             style={[styles.card, selected === length && styles.cardSelected]}
             onPress={() => {
-              tapHaptic();
+              selectionHaptic();
               playClickSound();
               setSelected(length);
             }}

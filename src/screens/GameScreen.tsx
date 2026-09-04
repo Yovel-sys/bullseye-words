@@ -15,12 +15,14 @@ import { isValidWord, pickRoundTarget } from '../data/words';
 import GuessRow from '../components/GuessRow';
 import LetterBoxInput from '../components/LetterBoxInput';
 import GearIcon from '../components/GearIcon';
-import { errorHaptic, successHaptic, tapHaptic } from '../utils/haptics';
+import ReportModal from '../components/ReportModal';
+import { errorHaptic, selectionHaptic, successHaptic, tapHaptic } from '../utils/haptics';
 import {
   playClickSound,
   playCorrectSound,
   playGuessSound,
   playIncorrectSound,
+  playLetterClickSound,
 } from '../utils/sound';
 
 interface GuessEntry {
@@ -46,7 +48,16 @@ export default function GameScreen({
   const [history, setHistory] = useState<GuessEntry[]>([]);
   const [won, setWon] = useState(false);
   const [error, setError] = useState('');
+  // דיווח על מילה שגויה: המילה שנדחתה נטענת מראש לטופס
+  const [reportVisible, setReportVisible] = useState(false);
+  const [reportedWord, setReportedWord] = useState('');
   const inputRef = useRef<TextInput>(null);
+
+  function openReport(word: string) {
+    tapHaptic();
+    setReportedWord(word);
+    setReportVisible(true);
+  }
 
   function startNewRound() {
     const round = pickRoundTarget(wordLength);
@@ -114,6 +125,14 @@ export default function GameScreen({
       >
         <GearIcon size={20} color="#2b6cb0" />
       </Pressable>
+      <Pressable
+        style={styles.reportButton}
+        onPress={() => openReport('')}
+        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        accessibilityLabel="דיווח על מילה שגויה"
+      >
+        <Text style={styles.reportButtonText}>🚩</Text>
+      </Pressable>
       <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -168,6 +187,10 @@ export default function GameScreen({
               value={input}
               wordLength={wordLength}
               onChangeText={(text) => {
+                if (text.length > input.length) {
+                  selectionHaptic();
+                  playLetterClickSound();
+                }
                 if (error && text.length > input.length) {
                   const typed = text.slice(input.length);
                   setInput(typed.slice(0, wordLength));
@@ -188,7 +211,14 @@ export default function GameScreen({
           </View>
         )}
 
-        {error.length > 0 && <Text style={styles.error}>{error}</Text>}
+        {error.length > 0 && (
+          <View style={styles.errorBox}>
+            <Text style={styles.error}>{error}</Text>
+            <Pressable onPress={() => openReport(input)}>
+              <Text style={styles.errorReportLink}>בטוחים שהמילה תקנית? דווחו לנו</Text>
+            </Pressable>
+          </View>
+        )}
 
         <FlatList
           style={styles.flex}
@@ -202,6 +232,28 @@ export default function GameScreen({
           }
         />
       </KeyboardAvoidingView>
+
+      <ReportModal
+        visible={reportVisible}
+        title="דיווח על מילה שגויה"
+        intro="ניסיתם מילה שאתם בטוחים שהיא תקנית, אבל המשחק לא זיהה אותה? ספרו לנו ונבדוק."
+        fields={[
+          {
+            key: 'word',
+            label: 'מה המילה?',
+            placeholder: 'לדוגמה: שולחן',
+            required: true,
+            initialValue: reportedWord,
+          },
+          {
+            key: 'meaning',
+            label: 'מה הפירוש שלה?',
+            placeholder: 'הסבר קצר על משמעות המילה',
+            multiline: true,
+          },
+        ]}
+        onClose={() => setReportVisible(false)}
+      />
     </SafeAreaView>
   );
 }
@@ -227,6 +279,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
+  },
+  reportButton: {
+    position: 'absolute',
+    top: 44,
+    left: 68,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#e3ecf7',
+    borderWidth: 1,
+    borderColor: '#c6d7ec',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  reportButtonText: {
+    fontSize: 16,
   },
   title: {
     fontSize: 28,
@@ -309,9 +378,18 @@ const styles = StyleSheet.create({
     color: '#888',
     marginTop: 24,
   },
+  errorBox: {
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   error: {
     textAlign: 'center',
     color: '#c0392b',
-    marginBottom: 8,
+  },
+  errorReportLink: {
+    marginTop: 4,
+    fontSize: 13,
+    color: '#2b6cb0',
+    textDecorationLine: 'underline',
   },
 });

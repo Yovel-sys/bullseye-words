@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -9,7 +8,8 @@ import {
   View,
 } from 'react-native';
 import type { Settings } from '../state/settings';
-import { tapHaptic } from '../utils/haptics';
+import ReportModal from '../components/ReportModal';
+import { tapHaptic, toggleHaptic } from '../utils/haptics';
 import { playClickSound } from '../utils/sound';
 
 interface SettingsScreenProps {
@@ -51,13 +51,7 @@ function Toggle({ value, onValueChange }: ToggleProps) {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={() => {
-        tapHaptic();
-        // הסדר חשוב: קודם מעדכנים את הערך (שיכול לכבות/להדליק את הצליל עצמו),
-        // ורק אז מנגנים - כך שכיבוי המתג לא ישמיע צליל, והדלקתו כן.
-        onValueChange(!value);
-        playClickSound();
-      }}
+      onPress={() => onValueChange(!value)}
     >
       <Animated.View style={[styles.toggleTrack, { backgroundColor: trackBackground }]}>
         <Animated.View style={[styles.toggleThumb, { transform: [{ translateX }] }]} />
@@ -73,6 +67,23 @@ export default function SettingsScreen({
   onToggleHaptic,
 }: SettingsScreenProps) {
   const [bugReportVisible, setBugReportVisible] = useState(false);
+
+  // אותו רעיון כמו במתג הרטט: בכיבוי משמיעים לפני העדכון (בזמן שהצליל עוד
+  // פעיל), ובהפעלה אחריו — כדי שהמשתמש ישמע מיד מה בחר.
+  function handleToggleSound(value: boolean) {
+    tapHaptic();
+    if (!value) playClickSound();
+    onToggleSound(value);
+    if (value) playClickSound();
+  }
+
+  // המשוב עצמו הוא התצוגה המקדימה של המתג: בכיבוי מרטטים לפני העדכון (בזמן
+  // שהרטט עוד פעיל), ובהפעלה אחריו — כדי שהמשתמש ירגיש מיד מה בחר.
+  function handleToggleHaptic(value: boolean) {
+    if (!value) toggleHaptic(false);
+    onToggleHaptic(value);
+    if (value) toggleHaptic(true);
+  }
 
   return (
     <View style={styles.overlay}>
@@ -103,7 +114,7 @@ export default function SettingsScreen({
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.rowLabel}>אפקטים קוליים</Text>
-            <Toggle value={settings.soundEnabled} onValueChange={onToggleSound} />
+            <Toggle value={settings.soundEnabled} onValueChange={handleToggleSound} />
           </View>
         </View>
 
@@ -111,7 +122,13 @@ export default function SettingsScreen({
         <View style={styles.card}>
           <View style={styles.row}>
             <Text style={styles.rowLabel}>רטט (משוב הפטי)</Text>
-            <Toggle value={settings.hapticEnabled} onValueChange={onToggleHaptic} />
+            <Toggle
+              value={settings.hapticEnabled}
+              onValueChange={(value) => {
+                playClickSound();
+                handleToggleHaptic(value);
+              }}
+            />
           </View>
         </View>
 
@@ -131,25 +148,26 @@ export default function SettingsScreen({
         </View>
       </View>
 
-      <Modal
+      <ReportModal
         visible={bugReportVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setBugReportVisible(false)}
-      >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => {
-            tapHaptic();
-            playClickSound();
-            setBugReportVisible(false);
-          }}
-        >
-          <View style={styles.modalCard}>
-            <Text style={styles.modalText}>בקרוב</Text>
-          </View>
-        </Pressable>
-      </Modal>
+        title="דיווח על באג"
+        intro="נתקלתם במשהו שלא עובד כמו שצריך? ספרו לנו ונתקן."
+        fields={[
+          {
+            key: 'title',
+            label: 'כותרת',
+            placeholder: 'תיאור קצר של הבעיה',
+            required: true,
+          },
+          {
+            key: 'description',
+            label: 'מה קרה?',
+            placeholder: 'ספרו לנו מה קרה, ואיך אפשר לשחזר את הבעיה',
+            multiline: true,
+          },
+        ]}
+        onClose={() => setBugReportVisible(false)}
+      />
     </View>
   );
 }
@@ -157,7 +175,6 @@ export default function SettingsScreen({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
@@ -227,23 +244,5 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     backgroundColor: '#fff',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  modalCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingVertical: 24,
-    paddingHorizontal: 40,
-  },
-  modalText: {
-    fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
   },
 });
