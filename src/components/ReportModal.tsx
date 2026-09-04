@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  Animated,
   KeyboardAvoidingView,
-  Modal,
   Platform,
   Pressable,
   StyleSheet,
@@ -10,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import AnimatedModal from './AnimatedModal';
 import { successHaptic, tapHaptic } from '../utils/haptics';
 
 export interface ReportField {
@@ -32,11 +31,6 @@ interface ReportModalProps {
   onSubmit?: (values: Record<string, string>) => void;
 }
 
-// אנימציית הפתיחה/סגירה נעשית ידנית (animationType="none") כי ה-fade
-// המובנה של Modal איטי יחסית (~300ms) ולא ניתן לכוונון.
-const OPEN_DURATION = 140;
-const CLOSE_DURATION = 110;
-
 function initialValues(fields: ReportField[]): Record<string, string> {
   return Object.fromEntries(fields.map((f) => [f.key, f.initialValue ?? '']));
 }
@@ -55,22 +49,6 @@ export default function ReportModal({
 }: ReportModalProps) {
   const [values, setValues] = useState<Record<string, string>>(() => initialValues(fields));
   const [submitted, setSubmitted] = useState(false);
-  // ה-Modal נשאר מורכב עד שאנימציית הסגירה מסתיימת.
-  const [rendered, setRendered] = useState(visible);
-  const anim = useRef(new Animated.Value(visible ? 1 : 0)).current;
-
-  useEffect(() => {
-    if (visible) setRendered(true);
-    const animation = Animated.timing(anim, {
-      toValue: visible ? 1 : 0,
-      duration: visible ? OPEN_DURATION : CLOSE_DURATION,
-      useNativeDriver: Platform.OS !== 'web',
-    });
-    animation.start(({ finished }) => {
-      if (finished && !visible) setRendered(false);
-    });
-    return () => animation.stop();
-  }, [visible, anim]);
 
   // כל פתיחה מחדש של הטופס מתחילה מדף נקי (כולל ערכים שהוזנו מראש).
   useEffect(() => {
@@ -96,28 +74,14 @@ export default function ReportModal({
   }
 
   return (
-    <Modal visible={rendered} transparent animationType="none" onRequestClose={handleClose}>
-      <Animated.View style={[styles.overlay, { opacity: anim }]}>
+    <AnimatedModal visible={visible} onRequestClose={handleClose}>
+      <View style={styles.overlay}>
         <Pressable style={StyleSheet.absoluteFill} onPress={handleClose} />
         <KeyboardAvoidingView
           style={styles.cardWrapper}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-          <Animated.View
-            style={[
-              styles.card,
-              {
-                transform: [
-                  {
-                    scale: anim.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0.94, 1],
-                    }),
-                  },
-                ],
-              },
-            ]}
-          >
+          <View style={styles.card}>
             {submitted ? (
               <>
                 <Text style={styles.title}>{successTitle}</Text>
@@ -168,17 +132,16 @@ export default function ReportModal({
                 </View>
               </>
             )}
-          </Animated.View>
+          </View>
         </KeyboardAvoidingView>
-      </Animated.View>
-    </Modal>
+      </View>
+    </AnimatedModal>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
