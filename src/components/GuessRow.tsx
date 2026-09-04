@@ -40,12 +40,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 6,
+    borderColor: '#d8c4ac',
+    borderRadius: 9,
     marginHorizontal: 3,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#fffaf3',
   },
   cellText: {
     fontSize: 20,
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
   },
   bulls: {
     marginHorizontal: 4,
-    color: '#1a7a1a',
+    color: '#4f7942',
     fontWeight: '700',
   },
   hits: {

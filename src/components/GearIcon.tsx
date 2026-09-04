@@ -7,7 +7,7 @@ interface GearIconProps {
 
 const SPOKE_ANGLES = [0, 45, 90, 135];
 
-export default function GearIcon({ size = 20, color = '#2b6cb0' }: GearIconProps) {
+export default function GearIcon({ size = 20, color = '#c1541c' }: GearIconProps) {
   return (
     <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       {SPOKE_ANGLES.map((deg) => (

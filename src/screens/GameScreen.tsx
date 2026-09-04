@@ -123,7 +123,7 @@ export default function GameScreen({
         }}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
       >
-        <GearIcon size={20} color="#2b6cb0" />
+        <GearIcon size={20} color="#c1541c" />
       </Pressable>
       <Pressable
         style={styles.reportButton}
@@ -261,7 +261,7 @@ export default function GameScreen({
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fdf3e7',
   },
   flex: {
     flex: 1,
@@ -273,9 +273,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#e3ecf7',
+    backgroundColor: '#f7e3d0',
     borderWidth: 1,
-    borderColor: '#c6d7ec',
+    borderColor: '#e8c199',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
@@ -287,9 +287,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#e3ecf7',
+    backgroundColor: '#f7e3d0',
     borderWidth: 1,
-    borderColor: '#c6d7ec',
+    borderColor: '#e8c199',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
@@ -313,31 +313,31 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    color: '#555',
+    color: '#8a7360',
   },
   changeLink: {
     fontSize: 14,
-    color: '#2b6cb0',
+    color: '#c1541c',
     textDecorationLine: 'underline',
   },
   clue: {
     fontSize: 15,
     textAlign: 'center',
-    color: '#666',
+    color: '#8a7360',
     marginBottom: 8,
     paddingHorizontal: 24,
   },
   hintButton: {
     alignSelf: 'center',
     borderWidth: 1,
-    borderColor: '#2b6cb0',
+    borderColor: '#c1541c',
     borderRadius: 16,
     paddingHorizontal: 16,
     paddingVertical: 6,
     marginBottom: 8,
   },
   hintButtonText: {
-    color: '#2b6cb0',
+    color: '#c1541c',
     fontWeight: '600',
     fontSize: 14,
   },
@@ -347,14 +347,14 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   button: {
-    backgroundColor: '#2b6cb0',
-    borderRadius: 8,
+    backgroundColor: '#c1541c',
+    borderRadius: 10,
     paddingHorizontal: 24,
     paddingVertical: 10,
     justifyContent: 'center',
   },
   buttonDisabled: {
-    backgroundColor: '#a0aec0',
+    backgroundColor: '#c9b6a0',
   },
   buttonText: {
     color: '#fff',
@@ -369,13 +369,13 @@ const styles = StyleSheet.create({
   winText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#1a7a1a',
+    color: '#4f7942',
     marginBottom: 8,
     textAlign: 'center',
   },
   hint: {
     textAlign: 'center',
-    color: '#888',
+    color: '#a08a72',
     marginTop: 24,
   },
   errorBox: {
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   errorReportLink: {
     marginTop: 4,
     fontSize: 13,
-    color: '#2b6cb0',
+    color: '#c1541c',
     textDecorationLine: 'underline',
   },
 });
