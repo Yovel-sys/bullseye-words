@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { DIFFICULTY_LEVELS } from '../data/riddles';
-import { tapHaptic } from '../utils/haptics';
+import { selectionHaptic, tapHaptic } from '../utils/haptics';
 import GearIcon from '../components/GearIcon';
 
 interface DifficultyScreenProps {
@@ -51,7 +51,10 @@ export default function DifficultyScreen({
           <Pressable
             key={length}
             style={[styles.card, selected === length && styles.cardSelected]}
-            onPress={() => setSelected(length)}
+            onPress={() => {
+              selectionHaptic();
+              setSelected(length);
+            }}
           >
             <Text
               style={[
@@ -73,7 +76,13 @@ export default function DifficultyScreen({
         ))}
       </View>
 
-      <Pressable style={styles.button} onPress={() => onSelect(selected)}>
+      <Pressable
+        style={styles.button}
+        onPress={() => {
+          tapHaptic();
+          onSelect(selected);
+        }}
+      >
         <Text style={styles.buttonText}>התחל משחק</Text>
       </Pressable>
     </SafeAreaView>
