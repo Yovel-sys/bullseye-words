@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 import DifficultyScreen from './src/screens/DifficultyScreen';
 import GameScreen from './src/screens/GameScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
+import AnimatedModal from './src/components/AnimatedModal';
 import { loadProgress, saveProgress } from './src/state/progress';
 import { loadSettings, saveSettings, type Settings } from './src/state/settings';
 import { setHapticEnabled } from './src/utils/haptics';
@@ -60,18 +60,13 @@ export default function App() {
         />
       )}
 
-      <Modal
-        visible={settingsOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setSettingsOpen(false)}
-      >
+      <AnimatedModal visible={settingsOpen} onRequestClose={() => setSettingsOpen(false)}>
         <SettingsScreen
           settings={settings}
           onBack={() => setSettingsOpen(false)}
           onToggleHaptic={(value) => updateSettings({ ...settings, hapticEnabled: value })}
         />
-      </Modal>
+      </AnimatedModal>
 
       <StatusBar style="auto" />
     </>
