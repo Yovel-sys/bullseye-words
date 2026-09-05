@@ -111,7 +111,7 @@ export default function ReportModal({
                         setValues((prev) => ({ ...prev, [field.key]: text }))
                       }
                       placeholder={field.placeholder}
-                      placeholderTextColor="#a8b4c4"
+                      placeholderTextColor="#c2ab90"
                       multiline={field.multiline}
                     />
                   </View>
@@ -154,21 +154,21 @@ const styles = StyleSheet.create({
     maxWidth: 360,
   },
   card: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fdf3e7',
     borderRadius: 20,
     padding: 20,
   },
   title: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#1a202c',
+    color: '#3b2a1e',
     textAlign: 'center',
     marginBottom: 8,
     writingDirection: 'rtl',
   },
   message: {
     fontSize: 14,
-    color: '#666',
+    color: '#8a7360',
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: 4,
@@ -177,21 +177,21 @@ const styles = StyleSheet.create({
   fieldLabel: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#666',
+    color: '#8a7360',
     textAlign: 'right',
     writingDirection: 'rtl',
     marginTop: 14,
     marginBottom: 6,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: '#fffaf3',
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#c6d7ec',
+    borderColor: '#e8c199',
     paddingHorizontal: 14,
     paddingVertical: 10,
     fontSize: 15,
-    color: '#1a202c',
+    color: '#3b2a1e',
     textAlign: 'right',
     writingDirection: 'rtl',
   },
@@ -216,10 +216,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   submitButton: {
-    backgroundColor: '#2b6cb0',
+    backgroundColor: '#c1541c',
   },
   buttonDisabled: {
-    backgroundColor: '#a0aec0',
+    backgroundColor: '#c9b6a0',
   },
   submitText: {
     fontSize: 15,
@@ -228,14 +228,14 @@ const styles = StyleSheet.create({
     writingDirection: 'rtl',
   },
   cancelButton: {
-    backgroundColor: '#e3ecf7',
+    backgroundColor: '#f7e3d0',
     borderWidth: 1,
-    borderColor: '#c6d7ec',
+    borderColor: '#e8c199',
   },
   cancelText: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#2b6cb0',
+    color: '#c1541c',
     writingDirection: 'rtl',
   },
 });

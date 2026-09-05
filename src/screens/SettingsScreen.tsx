@@ -41,7 +41,7 @@ function Toggle({ value, onValueChange }: ToggleProps) {
 
   const trackBackground = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#ccc', '#2b6cb0'],
+    outputRange: ['#ddc9b4', '#c1541c'],
   });
   const translateX = anim.interpolate({
     inputRange: [0, 1],
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   dialog: {
     width: '100%',
     maxWidth: 360,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fdf3e7',
     borderRadius: 20,
     paddingVertical: 16,
     paddingBottom: 20,
@@ -197,27 +197,28 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '800',
+    color: '#3b2a1e',
   },
   closeButton: {
     fontSize: 18,
-    color: '#666',
+    color: '#8a7360',
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#666',
+    color: '#8a7360',
     textAlign: 'right',
     marginTop: 16,
     marginBottom: 8,
     paddingHorizontal: 20,
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
+    backgroundColor: '#fffaf3',
+    borderRadius: 14,
     marginHorizontal: 20,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: '#e2e2e2',
+    borderColor: '#e8c199',
   },
   row: {
     flexDirection: 'row-reverse',
@@ -227,10 +228,11 @@ const styles = StyleSheet.create({
   },
   rowLabel: {
     fontSize: 16,
+    color: '#3b2a1e',
   },
   chevron: {
     fontSize: 18,
-    color: '#999',
+    color: '#a08a72',
   },
   toggleTrack: {
     width: 50,

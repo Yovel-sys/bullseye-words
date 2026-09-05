@@ -43,7 +43,7 @@ export default function DifficultyScreen({
         }}
         hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
       >
-        <GearIcon size={20} color="#2b6cb0" />
+        <GearIcon size={20} color="#c1541c" />
       </Pressable>
       <Text style={styles.title}>בול פגיעה</Text>
       <Text style={styles.subtitle}>בחר/י דרגת קושי</Text>
@@ -96,7 +96,7 @@ export default function DifficultyScreen({
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fdf3e7',
     alignItems: 'center',
     paddingTop: 40,
   },
@@ -107,9 +107,9 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#e3ecf7',
+    backgroundColor: '#f7e3d0',
     borderWidth: 1,
-    borderColor: '#c6d7ec',
+    borderColor: '#e8c199',
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1,
@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    color: '#555',
+    color: '#8a7360',
     marginTop: 8,
     marginBottom: 24,
     textAlign: 'center',
@@ -136,28 +136,28 @@ const styles = StyleSheet.create({
   card: {
     width: 100,
     minHeight: 96,
-    borderRadius: 12,
+    borderRadius: 14,
     borderWidth: 2,
-    borderColor: '#bbb',
-    backgroundColor: '#fff',
+    borderColor: '#d8c4ac',
+    backgroundColor: '#fffaf3',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
     paddingHorizontal: 6,
   },
   cardSelected: {
-    borderColor: '#2b6cb0',
-    backgroundColor: '#2b6cb0',
+    borderColor: '#c1541c',
+    backgroundColor: '#c1541c',
   },
   cardLength: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#333',
+    color: '#3b2a1e',
     textAlign: 'center',
   },
   cardLabel: {
     fontSize: 13,
-    color: '#666',
+    color: '#8a7360',
     marginTop: 4,
     textAlign: 'center',
   },
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 32,
-    backgroundColor: '#2b6cb0',
-    borderRadius: 8,
+    backgroundColor: '#c1541c',
+    borderRadius: 10,
     paddingHorizontal: 32,
     paddingVertical: 14,
   },
